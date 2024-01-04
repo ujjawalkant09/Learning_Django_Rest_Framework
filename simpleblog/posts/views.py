@@ -4,6 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from posts.serializers import PostSerializer
 from .models import Post
+from rest_framework.permissions import IsAuthenticated
 # Create your views here 
 
 # class PostViewset(viewsets.ViewSet):
@@ -18,6 +19,7 @@ from .models import Post
     #     return Response(data=serializer.data,status=status.HTTP_200_OK)
     
 class PostViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
