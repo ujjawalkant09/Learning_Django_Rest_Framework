@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
+from .models import User
+from .tokens import create_jwt_pair_for_user
 # Create your views here.
 
 class SignUpView(generics.GenericAPIView):
@@ -35,9 +37,10 @@ class LoginView(APIView):
             user = authenticate(email=email, password=password)
             print(user)
             if user:
+                tokens = create_jwt_pair_for_user(user)
                 response = {
                     "message":"Login successfull",
-                    "token":user.auth_token.key
+                    "token":tokens
                 }
                 return Response(data=response,status=status.HTTP_200_OK)
             else:
@@ -54,3 +57,10 @@ class LoginView(APIView):
         }
 
         return Response(data=content, status=status.HTTP_200_OK)
+
+
+class AllUserDetails(APIView):
+    permission_classes = []
+    def post(self,request:Request):
+        user = User.objects.all()
+        return Response(data={"Count_Of_User":len(user)})
